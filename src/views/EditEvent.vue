@@ -19,18 +19,86 @@
 
         <form @submit.prevent="updateEvent" class="event-form">
           <div class="form-group">
-            <label>イベント名 *</label>
+            <label>イベント名 <span class="required-asterisk">*</span></label>
             <input v-model="form.title" type="text" required class="form-input" />
           </div>
           
           <div class="form-group">
-            <label>イベント詳細 *</label>
+            <label>イベント詳細 <span class="required-asterisk">*</span></label>
             <textarea v-model="form.description" required rows="5" class="form-input"></textarea>
           </div>
           
           <div class="form-group">
-            <label>開催日時 *</label>
-            <input v-model="form.event_date" type="datetime-local" required class="form-input" />
+            <label>開催パターン <span class="required-asterisk">*</span></label>
+            <select v-model="form.schedule_type" required class="form-input">
+              <option value="single">単発</option>
+              <option value="weekly">毎週</option>
+              <option value="biweekly">隔週</option>
+              <option value="monthly">毎月</option>
+              <option value="irregular">不定期</option>
+            </select>
+          </div>
+          <div v-if="form.schedule_type === 'single'" class="form-group">
+            <label>開催日 <span class="required-asterisk">*</span></label>
+            <input v-model="form.single_date" type="date" class="form-input" required />
+            <label>開始時刻 <span class="required-asterisk">*</span></label>
+            <input v-model="form.single_time" type="time" class="form-input" required />
+          </div>
+          <div v-else-if="form.schedule_type === 'weekly'" class="form-group">
+            <label>曜日 <span class="required-asterisk">*</span></label>
+            <select v-model="form.weekly_day" class="form-input" required>
+              <option value="月">月</option>
+              <option value="火">火</option>
+              <option value="水">水</option>
+              <option value="木">木</option>
+              <option value="金">金</option>
+              <option value="土">土</option>
+              <option value="日">日</option>
+            </select>
+            <label>開始時刻 <span class="required-asterisk">*</span></label>
+            <input v-model="form.weekly_time" type="time" class="form-input" required />
+          </div>
+          <div v-else-if="form.schedule_type === 'biweekly'" class="form-group">
+            <label>曜日 <span class="required-asterisk">*</span></label>
+            <select v-model="form.biweekly_day" class="form-input" required>
+              <option value="月">月</option>
+              <option value="火">火</option>
+              <option value="水">水</option>
+              <option value="木">木</option>
+              <option value="金">金</option>
+              <option value="土">土</option>
+              <option value="日">日</option>
+            </select>
+            <label>開始時刻 <span class="required-asterisk">*</span></label>
+            <input v-model="form.biweekly_time" type="time" class="form-input" required />
+            <label>備考（例：第1・第3週など）</label>
+            <input v-model="form.biweekly_note" type="text" class="form-input" placeholder="例：第1・第3週" />
+          </div>
+          <div v-else-if="form.schedule_type === 'monthly'" class="form-group">
+            <label>第何週 <span class="required-asterisk">*</span></label>
+            <select v-model="form.monthly_week" class="form-input" required>
+              <option value="1">第1</option>
+              <option value="2">第2</option>
+              <option value="3">第3</option>
+              <option value="4">第4</option>
+              <option value="5">第5</option>
+            </select>
+            <label>曜日 <span class="required-asterisk">*</span></label>
+            <select v-model="form.monthly_day" class="form-input" required>
+              <option value="月">月</option>
+              <option value="火">火</option>
+              <option value="水">水</option>
+              <option value="木">木</option>
+              <option value="金">金</option>
+              <option value="土">土</option>
+              <option value="日">日</option>
+            </select>
+            <label>開始時刻 <span class="required-asterisk">*</span></label>
+            <input v-model="form.monthly_time" type="time" class="form-input" required />
+          </div>
+          <div v-else-if="form.schedule_type === 'irregular'" class="form-group">
+            <label>備考</label>
+            <input v-model="form.irregular_note" type="text" class="form-input" placeholder="例：都度Twitterで告知" required />
           </div>
           
           <div class="form-group">
@@ -67,7 +135,7 @@
           </div>
           
           <div class="form-group">
-            <label>Twitter ID</label>
+            <label>Twitter ID <span class="required-asterisk">*</span></label>
             <input v-model="form.twitter_id" type="text" class="form-input" placeholder="@example" />
           </div>
           
@@ -104,7 +172,7 @@ interface EventImage {
   created_at: string
 }
 
-interface Event {
+interface MyEvent {
   id: string
   title: string
   description: string
@@ -119,7 +187,7 @@ interface Event {
   images: EventImage[]
 }
 
-const event = ref<Event | null>(null)
+const event = ref<MyEvent | null>(null)
 const loading = ref(false)
 const submitting = ref(false)
 const imagePreviews = ref<string[]>([])
@@ -127,7 +195,18 @@ const imagePreviews = ref<string[]>([])
 const form = reactive({
   title: '',
   description: '',
-  event_date: '',
+  schedule_type: 'single',
+  single_date: '',
+  single_time: '',
+  weekly_day: '',
+  weekly_time: '',
+  biweekly_day: '',
+  biweekly_time: '',
+  biweekly_note: '',
+  monthly_week: '',
+  monthly_day: '',
+  monthly_time: '',
+  irregular_note: '',
   max_participants: undefined as number | undefined,
   application_deadline: '',
   images: [] as File[],
@@ -161,7 +240,18 @@ const fetchEvent = async () => {
     // フォームにデータを設定
     form.title = data.title
     form.description = data.description
-    form.event_date = data.event_date.slice(0, 16) // datetime-local用にフォーマット
+    form.schedule_type = data.schedule_type || 'single'
+    form.single_date = data.single_date || ''
+    form.single_time = data.single_time || ''
+    form.weekly_day = data.weekly_day || ''
+    form.weekly_time = data.weekly_time || ''
+    form.biweekly_day = data.biweekly_day || ''
+    form.biweekly_time = data.biweekly_time || ''
+    form.biweekly_note = data.biweekly_note || ''
+    form.monthly_week = data.monthly_week || ''
+    form.monthly_day = data.monthly_day || ''
+    form.monthly_time = data.monthly_time || ''
+    form.irregular_note = data.irregular_note || ''
     form.max_participants = data.max_participants || undefined
     form.application_deadline = data.application_deadline || ''
     form.twitter_id = data.twitter_id || ''
@@ -229,7 +319,7 @@ const removeExistingImage = async (imageId: string) => {
 const updateEvent = async () => {
   if (!event.value) return
   
-  if (!form.title.trim() || !form.description.trim() || !form.event_date) {
+  if (!form.title.trim() || !form.description.trim() || !form.schedule_type) {
     toast.error('必須項目を入力してください')
     return
   }
@@ -247,7 +337,18 @@ const updateEvent = async () => {
       .update({
         title: form.title.trim(),
         description: form.description.trim(),
-        event_date: form.event_date,
+        schedule_type: form.schedule_type,
+        single_date: form.single_date,
+        single_time: form.single_time,
+        weekly_day: form.weekly_day,
+        weekly_time: form.weekly_time,
+        biweekly_day: form.biweekly_day,
+        biweekly_time: form.biweekly_time,
+        biweekly_note: form.biweekly_note,
+        monthly_week: form.monthly_week,
+        monthly_day: form.monthly_day,
+        monthly_time: form.monthly_time,
+        irregular_note: form.irregular_note,
         max_participants: form.max_participants,
         application_deadline: form.application_deadline || null,
         twitter_id: form.twitter_id
@@ -533,4 +634,6 @@ onMounted(() => {
     flex-direction: column;
   }
 }
+
+.required-asterisk { color: #e53935; font-weight: bold; }
 </style> 
