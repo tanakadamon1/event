@@ -1,8 +1,4 @@
 {
-  "routes": [
-    { "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|txt|woff2?))$", "dest": "/$1" },
-    { "src": "/(.*)", "dest": "/" }
-  ],
   "rewrites": [
     {
       "source": "/((?!.*\\.(?:js|css|png|jpg|jpeg|svg|ico|json|txt|woff|woff2|ttf|map|webp|gif|mp4|webm|ogg|mp3|m4a|wav|zip|rar|7z|pdf|csv|xml|wasm)$).*)",
