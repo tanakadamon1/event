@@ -196,29 +196,30 @@ const submitEvent = async () => {
   }
   loading.value = true
   try {
-    // 1. eventsテーブルにinsert
+    const insertData = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      schedule_type: form.schedule_type,
+      single_date: form.single_date || null,
+      single_time: form.single_time || null,
+      weekly_day: form.weekly_day || null,
+      weekly_time: form.weekly_time || null,
+      biweekly_day: form.biweekly_day || null,
+      biweekly_time: form.biweekly_time || null,
+      biweekly_note: form.biweekly_note || null,
+      monthly_week: form.monthly_week || null,
+      monthly_day: form.monthly_day || null,
+      monthly_time: form.monthly_time || null,
+      irregular_note: form.irregular_note || null,
+      max_participants: form.max_participants || null,
+      application_deadline: form.application_deadline || null,
+      twitter_id: form.twitter_id,
+      user_id: authStore.user.id
+    };
+    console.log('event insert:', insertData);
     const { data: event, error } = await supabase
       .from('events')
-      .insert({
-        title: form.title.trim(),
-        description: form.description.trim(),
-        schedule_type: form.schedule_type,
-        single_date: form.single_date || null,
-        single_time: form.single_time || null,
-        weekly_day: form.weekly_day || null,
-        weekly_time: form.weekly_time || null,
-        biweekly_day: form.biweekly_day || null,
-        biweekly_time: form.biweekly_time || null,
-        biweekly_note: form.biweekly_note || null,
-        monthly_week: form.monthly_week || null,
-        monthly_day: form.monthly_day || null,
-        monthly_time: form.monthly_time || null,
-        irregular_note: form.irregular_note || null,
-        max_participants: form.max_participants || null,
-        application_deadline: form.application_deadline || null,
-        twitter_id: form.twitter_id,
-        user_id: authStore.user.id
-      })
+      .insert(insertData)
       .select()
       .single()
     if (error) throw error
