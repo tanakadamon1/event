@@ -74,7 +74,7 @@
           
           <div class="event-content">
             <h3 class="event-title">{{ event.title }}</h3>
-            <p class="event-date">{{ formatDate(event.event_date) }}</p>
+            <p class="event-date">{{ formatEventDate(event) }}</p>
             <p class="event-description">{{ truncateText(event.description, 120) }}</p>
             
             <div class="event-meta">
@@ -151,7 +151,18 @@ interface Event {
   id: string
   title: string
   description: string
-  event_date: string
+  schedule_type: string
+  single_date: string | null
+  single_time: string | null
+  weekly_day: string | null
+  weekly_time: string | null
+  biweekly_day: string | null
+  biweekly_time: string | null
+  biweekly_note: string | null
+  monthly_week: number | null
+  monthly_day: string | null
+  monthly_time: string | null
+  irregular_note: string | null
   max_participants: number | null
   application_deadline: string | null
   twitter_id: string | null
@@ -280,9 +291,9 @@ const filteredEvents = computed(() => {
       case 'created_at_asc':
         return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       case 'event_date_asc':
-        return new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+        return getEventDate(a).getTime() - getEventDate(b).getTime()
       case 'event_date_desc':
-        return new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
+        return getEventDate(b).getTime() - getEventDate(a).getTime()
       default:
         return 0
     }
@@ -303,8 +314,52 @@ const goToEvent = (eventId: string) => {
   router.push(`/events/${eventId}`)
 }
 
-const formatDate = (dateString: string) => {
-  return format(new Date(dateString), 'yyyy年MM月dd日 HH:mm', { locale: ja })
+const getEventDate = (event: Event): Date => {
+  switch (event.schedule_type) {
+    case 'single':
+      if (event.single_date && event.single_time) {
+        return new Date(`${event.single_date}T${event.single_time}`)
+      }
+      return new Date(event.created_at)
+    default:
+      return new Date(event.created_at)
+  }
+}
+
+const formatEventDate = (event: Event) => {
+  switch (event.schedule_type) {
+    case 'single':
+      if (event.single_date && event.single_time) {
+        const dateTime = `${event.single_date}T${event.single_time}`
+        return format(new Date(dateTime), 'yyyy年MM月dd日 HH:mm', { locale: ja })
+      }
+      return '日時未定'
+    
+    case 'weekly':
+      if (event.weekly_day && event.weekly_time) {
+        return `毎週${event.weekly_day} ${event.weekly_time}`
+      }
+      return '毎週開催（詳細未定）'
+    
+    case 'biweekly':
+      if (event.biweekly_day && event.biweekly_time) {
+        return `隔週${event.biweekly_day} ${event.biweekly_time}${event.biweekly_note ? ` (${event.biweekly_note})` : ''}`
+      }
+      return '隔週開催（詳細未定）'
+    
+    case 'monthly':
+      if (event.monthly_week && event.monthly_day && event.monthly_time) {
+        const weekText = ['', '第1', '第2', '第3', '第4', '第5'][event.monthly_week]
+        return `毎月${weekText}${event.monthly_day} ${event.monthly_time}`
+      }
+      return '毎月開催（詳細未定）'
+    
+    case 'irregular':
+      return event.irregular_note || '不定期開催'
+    
+    default:
+      return '日時未定'
+  }
 }
 
 const truncateText = (text: string, maxLength: number) => {

@@ -176,7 +176,18 @@ interface MyEvent {
   id: string
   title: string
   description: string
-  event_date: string
+  schedule_type: string
+  single_date: string | null
+  single_time: string | null
+  weekly_day: string | null
+  weekly_time: string | null
+  biweekly_day: string | null
+  biweekly_time: string | null
+  biweekly_note: string | null
+  monthly_week: number | null
+  monthly_day: string | null
+  monthly_time: string | null
+  irregular_note: string | null
   max_participants: number | null
   application_deadline: string | null
   twitter_id: string | null

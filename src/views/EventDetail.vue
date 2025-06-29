@@ -74,7 +74,7 @@
           <div class="info-grid">
             <div class="info-item">
               <h3>開催日時</h3>
-              <p>{{ formatDate(event.event_date) }}</p>
+              <p>{{ formatDate(event.schedule_type, event.single_date, event.single_time, event.weekly_day, event.weekly_time, event.biweekly_day, event.biweekly_time, event.biweekly_note, event.monthly_week, event.monthly_day, event.monthly_time, event.irregular_note) }}</p>
             </div>
             
             <div class="info-item">
@@ -190,7 +190,18 @@ interface Event {
   id: string
   title: string
   description: string
-  event_date: string
+  schedule_type: string
+  single_date: string | null
+  single_time: string | null
+  weekly_day: string | null
+  weekly_time: string | null
+  biweekly_day: string | null
+  biweekly_time: string | null
+  biweekly_note: string | null
+  monthly_week: number | null
+  monthly_day: string | null
+  monthly_time: string | null
+  irregular_note: string | null
   max_participants: number | null
   application_deadline: string | null
   twitter_id: string | null
@@ -341,8 +352,40 @@ const submitApplication = async () => {
   }
 }
 
-const formatDate = (dateString: string) => {
-  return format(new Date(dateString), 'yyyy年MM月dd日 HH:mm', { locale: ja })
+const formatDate = (scheduleType: string, singleDate?: string | null, singleTime?: string | null, weeklyDay?: string | null, weeklyTime?: string | null, biweeklyDay?: string | null, biweeklyTime?: string | null, biweeklyNote?: string | null, monthlyWeek?: number | null, monthlyDay?: string | null, monthlyTime?: string | null, irregularNote?: string | null) => {
+  switch (scheduleType) {
+    case 'single':
+      if (singleDate && singleTime) {
+        const dateTime = `${singleDate}T${singleTime}`
+        return format(new Date(dateTime), 'yyyy年MM月dd日 HH:mm', { locale: ja })
+      }
+      return '日時未定'
+    
+    case 'weekly':
+      if (weeklyDay && weeklyTime) {
+        return `毎週${weeklyDay} ${weeklyTime}`
+      }
+      return '毎週開催（詳細未定）'
+    
+    case 'biweekly':
+      if (biweeklyDay && biweeklyTime) {
+        return `隔週${biweeklyDay} ${biweeklyTime}${biweeklyNote ? ` (${biweeklyNote})` : ''}`
+      }
+      return '隔週開催（詳細未定）'
+    
+    case 'monthly':
+      if (monthlyWeek && monthlyDay && monthlyTime) {
+        const weekText = ['', '第1', '第2', '第3', '第4', '第5'][monthlyWeek]
+        return `毎月${weekText}${monthlyDay} ${monthlyTime}`
+      }
+      return '毎月開催（詳細未定）'
+    
+    case 'irregular':
+      return irregularNote || '不定期開催'
+    
+    default:
+      return '日時未定'
+  }
 }
 
 const getStatusClass = (event: Event) => {
