@@ -142,7 +142,7 @@ const form = reactive({
   monthly_day: '',
   monthly_time: '',
   irregular_note: '',
-  max_participants: undefined as number | undefined,
+  max_participants: null as number | null,
   application_deadline: '',
   images: [] as File[],
   twitter_id: '',
@@ -182,7 +182,7 @@ const removeImage = (i: number) => {
 }
 
 function emptyToNull(val: any) {
-  return val === "" ? null : val;
+  return val === "" || val === undefined ? null : val;
 }
 
 const submitEvent = async () => {
