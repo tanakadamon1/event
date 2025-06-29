@@ -38,7 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     if (authUser) {
       const { data: profile, error: profileError } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', authUser.id)
         .single()
@@ -57,7 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (!user.value) throw new Error('User not authenticated')
     loading.value = true
     const { data, error } = await supabase
-      .from('users')
+      .from('profiles')
       .update(updates)
       .eq('id', user.value.id)
       .select()
@@ -78,13 +78,13 @@ export const useAuthStore = defineStore('auth', () => {
     if (authUser) {
       // プロフィールがなければ作成
       const { data: existingProfile } = await supabase
-        .from('users')
+        .from('profiles')
         .select('*')
         .eq('id', authUser.id)
         .single()
       if (!existingProfile) {
         const { data: newProfile, error: createError } = await supabase
-          .from('users')
+          .from('profiles')
           .insert({
             id: authUser.id,
             email: authUser.email,
