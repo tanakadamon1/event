@@ -199,7 +199,7 @@ export const fetchConversations = async () => {
       if (!conversations.has(key)) {
         conversations.set(key, {
           event_id: message.event_id,
-          event_title: 'Loading...', // 後で取得
+          event_title: '', // 後で取得
           other_user_id: otherUserId,
           other_user_username: '', // 後で取得
           unread_count: 0
@@ -221,9 +221,7 @@ export const fetchConversations = async () => {
     })
 
     // イベント情報を取得
-    const eventIdsRaw = Array.from(conversations.values()).map(conversation => conversation.event_id);
-    const eventIds = (Array.isArray(eventIdsRaw) ? eventIdsRaw : [eventIdsRaw]).filter(isUUID);
-    
+    const eventIds = Array.from(conversations.values()).map(conversation => conversation.event_id);
     let events: { id: string, title: string }[] = [];
     if (eventIds.length === 1) {
       const { data } = await supabase

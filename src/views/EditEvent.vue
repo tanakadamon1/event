@@ -71,11 +71,6 @@
             <input v-model="form.twitter_id" type="text" class="form-input" placeholder="@example" />
           </div>
           
-          <div class="form-group">
-            <label>Discord ID</label>
-            <input v-model="form.discord_id" type="text" class="form-input" placeholder="user#1234" />
-          </div>
-          
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" :disabled="submitting">
               {{ submitting ? '更新中...' : 'イベントを更新' }}
@@ -179,7 +174,7 @@ const fetchEvent = async () => {
   }
 }
 
-const handleImageChange = (e: Event) => {
+const handleImageChange = (e: globalThis.Event) => {
   const files = (e.target as HTMLInputElement).files
   if (!files) return
   
@@ -239,8 +234,8 @@ const updateEvent = async () => {
     return
   }
   
-  if (!form.twitter_id.trim() && !form.discord_id.trim()) {
-    toast.error('Twitter IDまたはDiscord IDのいずれかを入力してください')
+  if (!form.twitter_id.trim()) {
+    toast.error('Twitter IDを入力してください')
     return
   }
   
@@ -255,8 +250,7 @@ const updateEvent = async () => {
         event_date: form.event_date,
         max_participants: form.max_participants,
         application_deadline: form.application_deadline || null,
-        twitter_id: form.twitter_id,
-        discord_id: form.discord_id
+        twitter_id: form.twitter_id
       })
       .eq('id', event.value.id)
 

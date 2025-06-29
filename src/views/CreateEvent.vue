@@ -37,10 +37,6 @@
           <label>Twitter ID</label>
           <input v-model="form.twitter_id" type="text" class="form-input" placeholder="@example" />
         </div>
-        <div class="form-group">
-          <label>Discord ID</label>
-          <input v-model="form.discord_id" type="text" class="form-input" placeholder="user#1234" />
-        </div>
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" :disabled="loading">
             {{ loading ? '投稿中...' : 'イベントを投稿' }}
@@ -115,8 +111,8 @@ const submitEvent = async () => {
     toast.error('必須項目を入力してください')
     return
   }
-  if (!form.twitter_id.trim() && !form.discord_id.trim()) {
-    toast.error('Twitter IDまたはDiscord IDのいずれかを入力してください')
+  if (!form.twitter_id.trim()) {
+    toast.error('Twitter IDを入力してください')
     return
   }
   loading.value = true
@@ -131,7 +127,6 @@ const submitEvent = async () => {
         max_participants: form.max_participants,
         application_deadline: form.application_deadline || null,
         twitter_id: form.twitter_id,
-        discord_id: form.discord_id,
         user_id: authStore.user.id
       })
       .select()

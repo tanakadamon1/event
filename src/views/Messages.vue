@@ -29,7 +29,7 @@
             @click="selectConversation(conversation)"
           >
             <div class="conversation-header">
-              <h3 class="conversation-title">{{ conversation.event_title }}</h3>
+              <h3 class="conversation-title">{{ conversation.event_title || 'イベントが削除されました' }}</h3>
               <span v-if="conversation.unread_count > 0" class="unread-badge">
                 {{ conversation.unread_count }}
               </span>
@@ -51,7 +51,7 @@
         <!-- メッセージ詳細 -->
         <div v-if="selectedConversation" class="message-detail">
           <div class="message-header">
-            <h2>{{ selectedConversation.event_title }}</h2>
+            <h2>{{ selectedConversation.event_title || 'イベントが削除されました' }}</h2>
             <template v-if="selectedTwitterId">
               <a
                 :href="`https://twitter.com/${selectedTwitterId.replace('@','')}`"
@@ -248,7 +248,22 @@ watch(messages, async () => {
 })
 
 onMounted(async () => {
+  document.title = 'メッセージ | VRChatイベントキャスト募集掲示板'
   await fetchConversationsList()
+
+  // event_titleが空の会話を補完
+  for (const conv of conversations.value) {
+    if (!conv.event_title && conv.event_id) {
+      try {
+        const { data: eventData } = await supabase
+          .from('events')
+          .select('title')
+          .eq('id', conv.event_id)
+          .single()
+        if (eventData?.title) conv.event_title = eventData.title
+      } catch {}
+    }
+  }
 
   // クエリパラメータからeventとuserを取得
   const eventId = route.query.event as string | undefined
@@ -278,7 +293,6 @@ onMounted(async () => {
           .single()
         if (userProfile?.username) userName = userProfile.username
       } catch {}
-      console.log('仮会話 eventId:', eventId, 'eventTitle:', eventTitle);
       conversation = {
         event_id: eventId,
         event_title: eventTitle,
