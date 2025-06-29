@@ -181,8 +181,12 @@ const removeImage = (i: number) => {
   imagePreviews.value.splice(i, 1)
 }
 
-function emptyToNull(val: any) {
-  return val === "" || val === undefined ? null : val;
+function cleanInsertData(obj: Record<string, any>) {
+  const cleaned: Record<string, any> = {};
+  for (const key in obj) {
+    cleaned[key] = obj[key] === "" || obj[key] === undefined ? null : obj[key];
+  }
+  return cleaned;
 }
 
 const submitEvent = async () => {
@@ -200,26 +204,26 @@ const submitEvent = async () => {
   }
   loading.value = true
   try {
-    const insertData = {
+    const insertData = cleanInsertData({
       title: form.title.trim(),
       description: form.description.trim(),
       schedule_type: form.schedule_type,
-      single_date: emptyToNull(form.single_date),
-      single_time: emptyToNull(form.single_time),
-      weekly_day: emptyToNull(form.weekly_day),
-      weekly_time: emptyToNull(form.weekly_time),
-      biweekly_day: emptyToNull(form.biweekly_day),
-      biweekly_time: emptyToNull(form.biweekly_time),
-      biweekly_note: emptyToNull(form.biweekly_note),
-      monthly_week: emptyToNull(form.monthly_week),
-      monthly_day: emptyToNull(form.monthly_day),
-      monthly_time: emptyToNull(form.monthly_time),
-      irregular_note: emptyToNull(form.irregular_note),
-      max_participants: emptyToNull(form.max_participants),
-      application_deadline: emptyToNull(form.application_deadline),
+      single_date: form.single_date,
+      single_time: form.single_time,
+      weekly_day: form.weekly_day,
+      weekly_time: form.weekly_time,
+      biweekly_day: form.biweekly_day,
+      biweekly_time: form.biweekly_time,
+      biweekly_note: form.biweekly_note,
+      monthly_week: form.monthly_week,
+      monthly_day: form.monthly_day,
+      monthly_time: form.monthly_time,
+      irregular_note: form.irregular_note,
+      max_participants: form.max_participants,
+      application_deadline: form.application_deadline,
       twitter_id: form.twitter_id,
       user_id: authStore.user.id
-    };
+    });
     console.log('event insert:', insertData);
     const { data: event, error } = await supabase
       .from('events')
