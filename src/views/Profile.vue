@@ -9,18 +9,6 @@
         <div class="profile-card">
           <form @submit.prevent="updateProfile" class="profile-form">
             <div class="form-group">
-              <label for="email">メールアドレス</label>
-              <input
-                id="email"
-                type="email"
-                :value="user?.email"
-                disabled
-                class="form-input disabled"
-              />
-              <small>メールアドレスは変更できません</small>
-            </div>
-
-            <div class="form-group">
               <label for="username">ユーザー名 *</label>
               <input
                 id="username"
