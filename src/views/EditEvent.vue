@@ -347,7 +347,7 @@ const updateEvent = async () => {
       title: form.title.trim(),
       description: form.description.trim(),
       schedule_type: form.schedule_type,
-      single_date: form.single_date,
+      single_date: form.single_date === '' ? null : form.single_date,
       single_time: form.single_time === '' ? null : form.single_time,
       weekly_day: form.weekly_day,
       weekly_time: form.weekly_time === '' ? null : form.weekly_time,
@@ -359,7 +359,7 @@ const updateEvent = async () => {
       monthly_time: form.monthly_time === '' ? null : form.monthly_time,
       irregular_note: form.irregular_note,
       max_participants: form.max_participants === null ? null : Number(form.max_participants),
-      application_deadline: form.application_deadline || null,
+      application_deadline: form.application_deadline === '' ? null : form.application_deadline,
       twitter_id: form.twitter_id
     }
     // 1. イベント情報を更新
