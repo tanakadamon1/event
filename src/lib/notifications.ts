@@ -187,7 +187,7 @@ export const createMessageNotification = async (
       .insert({
         user_id: receiverId,
         title: '新しいメッセージがあります',
-        content: `「${eventTitle}」で${senderUsername}さんからメッセージが届きました。`,
+        message: `「${eventTitle}」で${senderUsername}さんからメッセージが届きました。`,
         type: 'message',
         related_event_id: eventId
       })
