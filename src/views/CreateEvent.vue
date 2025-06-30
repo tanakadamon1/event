@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { supabase } from '@/lib/supabase'
@@ -259,6 +259,19 @@ const submitEvent = async () => {
     loading.value = false
   }
 }
+
+onMounted(async () => {
+  if (authStore.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('twitter_id')
+      .eq('id', authStore.user.id)
+      .single()
+    if (profile && profile.twitter_id) {
+      form.twitter_id = profile.twitter_id
+    }
+  }
+})
 </script>
 
 <style scoped>
