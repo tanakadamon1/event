@@ -295,16 +295,21 @@ const fetchEvent = async () => {
 
     const eventWithCount = {
       ...eventData,
-      profile: profileData || {
-        id: eventData.user_id,
-        username: '名無しさん',
-        avatar_url: '',
-        bio: '',
-        twitter_id: '',
-        discord_id: '',
-        created_at: '',
-        updated_at: ''
-      },
+      profile: profileData
+        ? {
+            ...profileData,
+            username: profileData.username || '名無しさん'
+          }
+        : {
+            id: eventData.user_id,
+            username: '名無しさん',
+            avatar_url: '',
+            bio: '',
+            twitter_id: '',
+            discord_id: '',
+            created_at: '',
+            updated_at: ''
+          },
       applications_count: 0
     }
 
