@@ -87,7 +87,6 @@ export const useAuthStore = defineStore('auth', () => {
           .from('profiles')
           .insert({
             id: authUser.id,
-            email: authUser.email,
             vrchat_username: '',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
