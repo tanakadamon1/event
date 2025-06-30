@@ -342,28 +342,30 @@ const updateEvent = async () => {
   
   submitting.value = true
   try {
+    // time型カラムの空文字をnullに変換
+    const patchData = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      schedule_type: form.schedule_type,
+      single_date: form.single_date,
+      single_time: form.single_time === '' ? null : form.single_time,
+      weekly_day: form.weekly_day,
+      weekly_time: form.weekly_time === '' ? null : form.weekly_time,
+      biweekly_day: form.biweekly_day,
+      biweekly_time: form.biweekly_time === '' ? null : form.biweekly_time,
+      biweekly_note: form.biweekly_note,
+      monthly_week: form.monthly_week,
+      monthly_day: form.monthly_day,
+      monthly_time: form.monthly_time === '' ? null : form.monthly_time,
+      irregular_note: form.irregular_note,
+      max_participants: form.max_participants,
+      application_deadline: form.application_deadline || null,
+      twitter_id: form.twitter_id
+    }
     // 1. イベント情報を更新
     const { error: updateError } = await supabase
       .from('events')
-      .update({
-        title: form.title.trim(),
-        description: form.description.trim(),
-        schedule_type: form.schedule_type,
-        single_date: form.single_date,
-        single_time: form.single_time,
-        weekly_day: form.weekly_day,
-        weekly_time: form.weekly_time,
-        biweekly_day: form.biweekly_day,
-        biweekly_time: form.biweekly_time,
-        biweekly_note: form.biweekly_note,
-        monthly_week: form.monthly_week,
-        monthly_day: form.monthly_day,
-        monthly_time: form.monthly_time,
-        irregular_note: form.irregular_note,
-        max_participants: form.max_participants,
-        application_deadline: form.application_deadline || null,
-        twitter_id: form.twitter_id
-      })
+      .update(patchData)
       .eq('id', event.value.id)
 
     if (updateError) throw updateError
