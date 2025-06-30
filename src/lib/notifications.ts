@@ -158,9 +158,12 @@ export const fetchUserNotifications = async () => {
 // 未読通知数を取得
 export const getUnreadNotificationCount = async () => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return 0;
     const { count, error } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
       .eq('is_read', false)
 
     if (error) throw error
