@@ -129,6 +129,7 @@ const markAsRead = async (notificationId: string) => {
     }
     
     toast.success('既読にしました')
+    window.dispatchEvent(new Event('updateUnreadCounts'))
   } catch (error) {
     console.error('Error marking notification as read:', error)
     toast.error('既読の更新に失敗しました')
@@ -149,6 +150,7 @@ const markAllAsRead = async () => {
     })
     
     toast.success('すべて既読にしました')
+    window.dispatchEvent(new Event('updateUnreadCounts'))
   } catch (error) {
     console.error('Error marking all notifications as read:', error)
     toast.error('既読の更新に失敗しました')
