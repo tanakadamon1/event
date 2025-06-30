@@ -182,7 +182,7 @@ export const createMessageNotification = async (
   receiverId: string
 ) => {
   try {
-    const { error } = await supabase
+    const { error, data } = await supabase
       .from('notifications')
       .insert({
         user_id: receiverId,
@@ -191,6 +191,9 @@ export const createMessageNotification = async (
         type: 'message',
         related_event_id: eventId
       })
+
+    console.log('Notification insert error:', error);
+    console.log('Notification insert data:', data);
 
     if (error) {
       console.error('Error creating message notification:', error)
