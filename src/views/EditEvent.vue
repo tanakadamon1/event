@@ -365,7 +365,10 @@ const updateEvent = async () => {
       monthly_time: form.monthly_time === '' ? null : form.monthly_time,
       irregular_note: form.irregular_note,
       max_participants: form.max_participants === null ? null : Number(form.max_participants),
-      application_deadline: form.application_deadline === '' ? null : form.application_deadline,
+      application_deadline:
+        form.application_deadline && typeof form.application_deadline === 'string'
+          ? form.application_deadline
+          : null,
       twitter_id: form.twitter_id
     }
     // 1. イベント情報を更新
