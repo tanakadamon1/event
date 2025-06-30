@@ -129,7 +129,7 @@ export const markConversationAsRead = async (eventId: string, otherUserId: strin
         .select('id, is_read')
         .eq('user_id', user.id)
         .eq('type', 'message')
-        .eq('related_id', eventId)
+        .eq('related_event_id', eventId)
         .eq('is_read', false);
       if (selectError) {
         console.error('Error selecting message notifications:', selectError);

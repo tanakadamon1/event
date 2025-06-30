@@ -70,7 +70,7 @@ export interface Notification {
   title: string
   content: string
   is_read: boolean
-  related_id?: string
+  related_event_id?: string
   created_at: string
 }
 

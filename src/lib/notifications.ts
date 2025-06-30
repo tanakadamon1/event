@@ -65,7 +65,7 @@ export const createApplicationNotification = async (
         title: '新しい応募があります',
         content: `「${eventTitle}」に${applicantUsername}さんが応募しました。`,
         type: 'application',
-        related_id: eventId
+        related_event_id: eventId
       })
 
     if (error) {
@@ -93,7 +93,7 @@ export const createStatusChangeNotification = async (
         title: '応募ステータスが更新されました',
         content: `「${eventTitle}」の応募が${statusText}されました。`,
         type: 'status_change',
-        related_id: applicationId
+        related_event_id: applicationId
       })
 
     if (error) {
@@ -186,7 +186,7 @@ export const createMessageNotification = async (
         title: '新しいメッセージがあります',
         content: `「${eventTitle}」で${senderUsername}さんからメッセージが届きました。`,
         type: 'message',
-        related_id: eventId
+        related_event_id: eventId
       })
 
     if (error) {
@@ -213,7 +213,7 @@ export const createDonationNotification = async (
         title: '投げ銭を受け取りました',
         content: `「${eventTitle}」で${donorUsername}さんから${amount.toLocaleString()}円の投げ銭を受け取りました。`,
         type: 'system',
-        related_id: eventId
+        related_event_id: eventId
       })
 
     if (error) {
