@@ -87,9 +87,16 @@
               <p>承認済み: {{ event.applications_count || 0 }} / {{ event.max_participants }}人</p>
             </div>
             
-            <div class="info-item" v-if="event.application_deadline">
+            <div class="info-item" v-if="true">
               <h3>応募締切</h3>
-              <p>{{ formatDate(event.application_deadline) }}</p>
+              <p>
+                <template v-if="event.application_deadline">
+                  {{ formatDateForDeadline(event.application_deadline) }}
+                </template>
+                <template v-else>
+                  未定
+                </template>
+              </p>
             </div>
           </div>
 
@@ -385,6 +392,15 @@ const formatDate = (scheduleType: string, singleDate?: string | null, singleTime
     
     default:
       return '日時未定'
+  }
+}
+
+const formatDateForDeadline = (dateStr: string | null) => {
+  if (!dateStr) return '未定'
+  try {
+    return format(new Date(dateStr), 'yyyy年MM月dd日', { locale: ja })
+  } catch {
+    return dateStr
   }
 }
 
