@@ -354,7 +354,13 @@ const updateEvent = async () => {
       biweekly_day: form.biweekly_day,
       biweekly_time: form.biweekly_time === '' ? null : form.biweekly_time,
       biweekly_note: form.biweekly_note,
-      monthly_week: form.monthly_week === null ? null : Number(form.monthly_week),
+      monthly_week:
+        form.monthly_week === null ||
+        isNaN(Number(form.monthly_week)) ||
+        Number(form.monthly_week) < 1 ||
+        Number(form.monthly_week) > 5
+          ? null
+          : Number(form.monthly_week),
       monthly_day: form.monthly_day,
       monthly_time: form.monthly_time === '' ? null : form.monthly_time,
       irregular_note: form.irregular_note,
