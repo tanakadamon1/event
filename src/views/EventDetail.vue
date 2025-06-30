@@ -270,7 +270,7 @@ const fetchEvent = async () => {
         .from('profiles')
         .insert({
           id: eventData.user_id,
-          username: eventData.user_id.slice(0, 8),
+          username: '名無しさん',
           avatar_url: '',
           bio: '',
           twitter_id: '',
@@ -297,7 +297,7 @@ const fetchEvent = async () => {
       ...eventData,
       profile: profileData || {
         id: eventData.user_id,
-        username: 'Unknown',
+        username: '名無しさん',
         avatar_url: '',
         bio: '',
         twitter_id: '',
