@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import Legal from '@/views/Legal.vue'
 
 const routes = [
   {
@@ -62,6 +63,11 @@ const routes = [
     name: 'Notifications',
     component: () => import('@/views/Notifications.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/legal',
+    name: 'Legal',
+    component: Legal
   }
 ]
 
