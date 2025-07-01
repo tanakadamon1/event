@@ -16,6 +16,14 @@
             <li><router-link to="/profile">プロフィール</router-link></li>
           </ul>
         </div>
+
+        <div class="footer-section">
+          <h4>法的情報</h4>
+          <ul class="footer-links">
+            <li><router-link to="/legal">特定商取引法に基づく表記</router-link></li>
+            <li><a href="https://twitter.com/yokena45330" target="_blank" rel="noopener">運営者Twitter（@yokena45330）</a></li>
+          </ul>
+        </div>
       </div>
       
       <div class="footer-bottom">
